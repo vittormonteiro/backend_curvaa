@@ -56,7 +56,7 @@ router.put('/', celebrate({
         previsao: Joi.string().required(),
         dt_fim: Joi.string().optional().allow(null),
         uuidcliente: Joi.string().uuid().required(),
-        uuidlicenca: Joi.string().uuid().required(),
+        uuidlicenca: Joi.string().uuid().optional().allow(null),
         valor: Joi.number().required(),
     }
 }), controller.update);
