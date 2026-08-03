@@ -47,7 +47,7 @@ router.patch('/photo', upload.single('file'), celebrate({
 router.put('/', celebrate({
     [Segments.BODY]:{
         _uuid: Joi.string().uuid().required(),
-        status: Joi.string().required().uppercase(),
+        status: Joi.string().optional().uppercase(),
         codigo: Joi.string().required(),
         titulo: Joi.string().required(),
         escopo: Joi.string().required(),
