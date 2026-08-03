@@ -1,0 +1,1 @@
+# API rest desenvolvida em Node.js par o sistema CURVAA.

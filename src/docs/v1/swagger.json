@@ -1,0 +1,1281 @@
+{
+
+  "openapi": "3.0.0",
+
+  "info": {
+    "title": "API REST - SISTEMA CURVAA",
+    "version": "1.0.0",
+    "description": "## Descrição\n\nAPI REST responsável por gerenciar os dados de do sistema CURVAA.\n\n### 🔐 Autenticação\nEsta API utiliza **Bearer Token (JWT)**.\n\nUse o botão **Authorize** e informe:\n\n```\nBearer {seu_token_jwt}\n```",
+    "contact": {
+      "name": "Vitor Monteiro",
+      "email": "vitor.lmj@gmail.com"
+    }
+  },
+
+  "servers": [
+    {
+      "url": "http://localhost:5433",
+      "description": "Ambiente de Desenvolvimento"
+    },
+    {
+      "url": "http://curvaa.com.br/api",
+      "description": "Ambiente de Produção"
+    }
+  ],
+
+  "security": [
+    { "bearerAuth": [] }
+  ],
+
+  "tags": [
+    { "name": "Health", "description": "Monitoramento da API" },
+    { "name": "Session", "description": "Criar ou remover sessão (token)" },
+    { "name": "Pluviometers", "description": "Gestão e consulta dos pluviômetros" },
+    { "name": "Pluviometers Data", "description": "Gestão e consulta dos dados dos pluviômetros" },
+    { "name": "Precipitation", "description": "Gestão e consulta dos dados de precipitação (Clima tempo)" },
+    { "name": "Sector", "description": "Gestão e consulta dos setores" },
+    { "name": "AlertsData", "description": "Consulta dos alertas enviados por email" },
+    { "name": "Users", "description": "Gestão e consulta dos usuários" },
+    { "name": "Profile", "description": "Gestão e consulta do perfil do usuário" }
+  ],
+
+  "paths": {
+
+    "/": {
+
+      "get": {
+        "tags": ["Health"],
+        "summary": "Verificar status da API",
+        "operationId": "healthCheck",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "API disponível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/session": {
+
+      "post": {
+        "tags": ["Session"],
+        "summary": "Criar sessão",
+        "operationId": "CreateSessions",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSessionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Criação de sessão bem sucedida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      },
+
+      "delete": {
+        "tags": ["Session"],
+        "summary": "Remover sessão",
+        "operationId": "DeleteSessions",
+        "responses": {
+          "200": {
+            "description": "Remoção de sessão bem sucedida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      }
+
+    },
+
+    "/pluviometers": {
+
+      "get": {
+        "tags": ["Pluviometers"],
+        "summary": "Listar pluviômetros",
+        "operationId": "listPluviometers",
+        "responses": {
+          "200": {
+            "description": "Lista de pluviômetros",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Pluviometer"
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      },
+
+      "put": {
+        "tags": ["Pluviometers"],
+        "summary": "Atualizar pluviômetro",
+        "operationId": "updatePluviometer",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePluviometerRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Pluviômetro criado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pluviometer"
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+
+    },
+
+   "/pluviometers/read": {
+
+      "post": {
+        "tags": ["Pluviometers"],
+        "summary": "Filtrar pluviômetros",
+        "operationId": "filterPluviometers",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReadPluviometerRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Lista de pluviômetros filtrados",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Pluviometer"
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      }
+
+    },
+
+    "/pluviometers/create": {
+
+      "post": {
+        "tags": ["Pluviometers"],
+        "summary": "Cadastrar pluviômetro",
+        "operationId": "createPluviometer",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePluviometerRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Pluviômetro criado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pluviometer"
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+
+    },
+
+    "/pluviometers/{uuidpluvi}": {
+
+      "get": {
+        "tags": ["Pluviometers"],
+        "summary": "Buscar pluviômetro por UUID",
+        "operationId": "getPluviometerById",
+        "parameters": [
+          {
+            "name": "uuidpluvi",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Pluviômetro encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pluviometer"
+                }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      },
+
+      "delete": {
+        "tags": ["Pluviometers"],
+        "summary": "Remover pluviômetro",
+        "operationId": "deletePluviometer",
+        "parameters": [
+          {
+            "name": "uuidpluvi",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": { "description": "Removido com sucesso" },
+          "403": { "description": "Acesso restrito" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+
+    },
+
+    "/pluviometersData/create": {
+
+      "post": {
+        "tags": ["Pluviometers Data"],
+        "summary": "Cadastrar dados do pluviômetro",
+        "operationId": "createPluviometerData",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePluviometerDataRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Dados do pluviômetro criados",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pluviometer"
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+
+    },
+
+    "/pluviometersData/read": {
+
+      "post": {
+        "tags": ["Pluviometers Data"],
+        "summary": "Filtrar dados do pluviômetros",
+        "operationId": "filterPluviometersData",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReadPluviometerDataRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Lista de dados do pluviômetros filtrados",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PluviometerData"
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      }
+
+    },
+
+    "/pluviometersData/accumulated": {
+
+      "get": {
+        "tags": ["Pluviometers Data"],
+        "summary": "Acumulado pluviômetros",
+        "operationId": "AcummPluviometers",
+        "responses": {
+          "200": {
+            "description": "Dado acumulado em todos os pluviômetros",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PluviometerDataAcum"
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      }
+
+    },
+
+    "/precipitations/read": {
+      "post": {
+        "tags": ["Precipitation"],
+        "summary": "Consulta de precipitação registrada",
+        "operationId": "readPrecipitation",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PrecipitationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Consulta realizada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrecipitationResponse"
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+
+    "/precipitations/next": {
+      "post": {
+        "tags": ["Precipitation"],
+        "summary": "Consulta de precipitação registrada(última leitura)",
+        "operationId": "getNextPrecipitation",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PrecipitationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Consulta realizada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrecipitationResponse"
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+
+    "/sector": {
+
+      "get": {
+        "tags": ["Sector"],
+        "summary": "Listar setores",
+        "operationId": "listSectors",
+        "responses": {
+          "200": {
+            "description": "Lista de setores",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Sector"
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      }
+
+    },
+
+    "/alertsData/read": {
+
+      "post": {
+        "tags": ["AlertsData"],
+        "summary": "Consulta dados de alertas",
+        "operationId": "alertsData",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReadAlertsDataRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Consulta de dados de alertas bem sucedida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AlertsDataResponse"
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      }
+
+    },
+    
+    "/users": {
+
+      "get": {
+        "tags": ["Users"],
+        "summary": "Listar usuários",
+        "operationId": "listUsers",
+        "responses": {
+          "200": {
+            "description": "Lista de usuários",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Users"
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      },
+
+      "put": {
+        "tags": ["Users"],
+        "summary": "Atualizar usuário",
+        "operationId": "updateUser",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUsersRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Usuário criado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Users"
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+
+    },
+
+   "/users/read": {
+
+      "post": {
+        "tags": ["Users"],
+        "summary": "Filtrar usuários",
+        "operationId": "filterUsers",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReadUsersRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Lista de usuários filtrados",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Users"
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      }
+
+    },
+
+    "/users/create": {
+
+      "post": {
+        "tags": ["Users"],
+        "summary": "Cadastrar usuário",
+        "operationId": "createUser",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUsersRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Usuário criado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Users"
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+
+    },
+
+    "/users/{uuidusuario}": {
+
+      "get": {
+        "tags": ["Users"],
+        "summary": "Buscar usuário por UUID",
+        "operationId": "getUserById",
+        "parameters": [
+          {
+            "name": "uuidusuario",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usuário encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Users"
+                }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      },
+
+      "delete": {
+        "tags": ["Users"],
+        "summary": "Remover usuário",
+        "operationId": "deleteUser",
+        "parameters": [
+          {
+            "name": "uuidusuario",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": { "description": "Removido com sucesso" },
+          "403": { "description": "Acesso restrito" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+
+    },
+
+    "/profile": {
+
+      "get": {
+        "tags": ["Profile"],
+        "summary": "Obter dados do perfil do usuário autenticado",
+        "operationId": "getProfile",
+        "responses": {
+          "200": {
+            "description": "Dados do perfil",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Users" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      },
+
+      "put": {
+        "tags": ["Profile"],
+        "summary": "Atualizar dados do perfil do usuário autenticado",
+        "operationId": "updateProfile",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProfileRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Perfil atualizado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Users" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      },
+
+      "patch": {
+        "tags": ["Profile"],
+        "summary": "Atualizar avatar do perfil",
+        "operationId": "uploadProfileAvatar",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Imagem do avatar"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Avatar atualizado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Users" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+
+    },
+
+    "/profile/reset": {
+
+      "put": {
+        "tags": ["Profile"],
+        "summary": "Alterar senha do usuário autenticado",
+        "operationId": "resetProfilePassword",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["oldpass", "newpass", "renewpass"],
+                "properties": {
+                  "oldpass": { "type": "string", "example": "SenhaAtual123" },
+                  "newpass": { "type": "string", "example": "NovaSenha123" },
+                  "renewpass": { "type": "string", "example": "NovaSenha123" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Senha atualizada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "example": "Senha atualizada com sucesso"
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+
+    }
+
+  },
+
+  "components": {
+    
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+
+    "schemas": {
+
+      "HealthResponse": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string", "example": "ok" },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-01-14T12:00:00Z"
+          }
+        }
+      },
+
+      "CreateSessionRequest": {
+        "type": "object",
+        "required": ["login", "pass"],
+        "properties": {
+          "login": { "type": "string", "example": "admin" },
+          "pass": { "type": "string", "example": "password123" }
+        }
+      },
+
+      "Pluviometer": {
+        "type": "object",
+        "properties": {
+          "uuidpluvi": { "type": "string", "format": "uuid" },
+          "idpluvi": { "type": "integer", "format": "int64" },
+          "nome": { "type": "string" },
+          "descricao": { "type": "string" },
+          "nserie": { "type": "string" },
+          "_lat": { "type": "string" },
+          "_long": { "type": "string" },
+          "value": { "type": "number", "format": "float" },
+          "status_at": { "type": "boolean", "description": "Status real persistido no banco"},
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time" }
+        }
+      },
+
+      "CreatePluviometerRequest": {
+        "type": "object",
+        "required": ["idpluvi", "nome", "nserie", "_lat", "_long", "status_at"],
+        "properties": {
+          "idpluvi": { "type": "integer", "example": 123 },
+          "nome": { "type": "string", "example": "PLV-2026-001" },
+          "nserie": { "type": "string", "example": "123-1" },
+          "descricao": { "type": "string", "example": "Pluviômetro Central" },
+          "_lat": { "type": "string", "example": "-23.5505" },
+          "_long": { "type": "string", "example": "-46.6333" },
+          "status_at": { "type": "boolean", "example": true }
+        }
+      },
+
+      "UpdatePluviometerRequest": {
+        "type": "object",
+        "required": ["uuidpluvi", "idpluvi", "nome", "nserie", "_lat", "_long", "status_at"],
+        "properties": {
+          "uuidpluvi": { "type": "string", "format": "uuid" },
+          "idpluvi": { "type": "integer", "example": 123 },
+          "nome": { "type": "string", "example": "PLV-2026-001" },
+          "nserie": { "type": "string", "example": "123-1" },
+          "descricao": { "type": "string", "example": "Pluviômetro Central" },
+          "_lat": { "type": "string", "example": "-23.5505" },
+          "_long": { "type": "string", "example": "-46.6333" },
+          "status_at": { "type": "boolean", "example": true }
+        }
+      },
+
+      "ReadPluviometerRequest": {
+        "type": "object",
+        "required": ["status_at"],
+        "properties": {
+          "status_at": {
+            "type": "string",
+            "enum": ["Ativo", "Inativo"],
+            "example": "Ativo",
+            "description": "Status tratado proveniente da VIEW"
+          }
+        }
+      },
+
+      "PluviometerData": {
+        "type": "object",
+        "properties": {
+          "uuidpllog": { "type": "string", "format": "uuid" },
+          "nome": { "type": "string" },
+          "descricao": { "type": "string" },
+          "logger_sn": { "type": "string" },
+          "sensor_sn": { "type": "string" },
+          "value": { "type": "number", "format": "float" },
+          "value1h": { "type": "number", "format": "float" },
+          "value24h": { "type": "number", "format": "float" },
+          "value72h": { "type": "number", "format": "float" },
+          "int1h": { "type": "number", "format": "float" },
+          "cpc": { "type": "number", "format": "float" },
+          "timestamp_sn": { "type": "string", "format": "date-time" },
+          "data": { "type": "string" },
+          "hora": { "type": "string" }
+        }
+      },
+
+      "PluviometerDataAcum": {
+        "type": "object",
+        "properties": {
+          "nome": { "type": "string" },
+          "descricao": { "type": "string" },
+          "sensor_sn": { "type": "string" },
+          "value1h": { "type": "number", "format": "float" },
+          "value24h": { "type": "number", "format": "float" },
+          "value72h": { "type": "number", "format": "float" },
+          "cpc": { "type": "number", "format": "float" },
+          "int1h": { "type": "number", "format": "float" },
+          "dt_atualizacao": { "type": "string", "format": "date-time" },
+          "classe": { "type": "string" },
+          "cor": { "type": "string" }
+        }
+      },
+
+      "CreatePluviometerDataRequest": {
+        "type": "object",
+        "required": ["logger_sn", "sensor_sn", "timestamp", "value"],
+        "properties": {
+          "logger_sn": { "type": "string", "example": "123" },
+          "sensor_sn": { "type": "string", "example": "123-1" },
+          "timestamp": { "type": "string", "format": "date-time", "example": "2026-01-26T18:30:00Z" },
+          "value": { "type": "number", "format": "float", "example": 0.88 }
+        }
+      },
+
+      "ReadPluviometerDataRequest": {
+        "type": "object",
+        "properties": {
+            "logger_sn": { "type": "string", "example": "2026001" },
+            "_start": { "type": "string", "format": "date-time", "example": "2026-01-25T00:00:00Z" },
+            "_end": { "type": "string", "format": "date-time", "example": "2026-01-25T14:00:00Z" }
+        }
+      },
+
+      "PrecipitationRequest": {
+        "type": "object",
+        "required": ["timestamp"],
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+
+      "PrecipitationResponse": {
+        "type": "object",
+        "properties": {
+          "_uuid": {
+            "type": "string",
+            "format": "uuid",
+            "example": "9c6f6b5a-8f3e-4a1b-b9a5-2f4c7c9e1c21"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-01-25T14:00:00"
+          },
+          "latitude": {
+            "type": "string",
+            "example": "-23.55052"
+          },
+          "longitude": {
+            "type": "string",
+            "example": "-46.63331"
+          },
+          "precipitation": {
+            "type": "number",
+            "format": "float",
+            "example": 12.5
+          },
+          "humidity": {
+            "type": "number",
+            "format": "float",
+            "example": 82.3
+          },
+          "pressure": {
+            "type": "number",
+            "format": "float",
+            "example": 1013.2
+          },
+          "probability": {
+            "type": "number",
+            "format": "float",
+            "example": 65.0
+          },
+          "wind_speed": {
+            "type": "integer",
+            "example": 18
+          },
+          "wind_direction": {
+            "type": "integer",
+            "example": 270
+          },
+          "wind_cardinaldirection": {
+            "type": "string",
+            "example": "W"
+          },
+          "gust": {
+            "type": "integer",
+            "example": 25
+          },
+          "thermal_sensation": {
+            "type": "integer",
+            "example": 29
+          },
+          "temperature": {
+            "type": "integer",
+            "example": 27
+          },
+          "cloudcover": {
+            "type": "number",
+            "format": "float",
+            "example": 75.5
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-01-25T14:05:00Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-01-25T14:10:00Z"
+          }
+        }
+      },
+
+      "Sector": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "object", "example": "GeoJSON FeatureCollection representing sectors" }
+        }
+      },
+
+      "AlertsDataResponse": {
+        "type": "object",
+        "properties": {
+          "_uuid": {
+            "type": "string",
+            "format": "uuid",
+            "example": "9c6f6b5a-8f3e-4a1b-b9a5-2f4c7c9e1c21"
+          },
+          "classe": {
+            "type": "string",
+            "example": "Alerta"
+          },
+          "data_hora": {
+            "type": "string",
+            "example": "2026-01-25 14:00"
+          },
+          "longitude": {
+            "type": "string",
+            "example": "-46.63331"
+          },
+          "descricao": {
+            "type": "string",
+            "example": "Nível de Situação mudou para: aLERTA. Valor de CPC Atual: 4.50"
+          },
+          "emails": {
+            "type": "string",
+            "example": "suporte@regea.com.br"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-01-25T14:05:00Z"
+          }
+        }
+      },
+
+      "ReadAlertsDataRequest": {
+        "type": "object",
+        "properties": {
+          "_start": { "type": "string", "format": "date-time", "example": "2026-01-25T00:00:00Z" },
+          "_end": { "type": "string", "format": "date-time", "example": "2026-01-25T14:00:00Z" }
+        }
+      },
+
+      "Users": {
+        "type": "object",
+        "properties": {
+          "uuidusuario": { "type": "string", "format": "uuid" },
+          "usuario": { "type": "string" },
+          "login": { "type": "string" },
+          "avatar": { "type": "string" },
+          "email": { "type": "string" },
+          "cpf": { "type": "string" },
+          "perfil": { "type": "string" },
+          "notification": { "type": "boolean" },
+          "termos_uso": { "type": "boolean" },
+          "contato": { "type": "string" },
+          "status_at": { "type": "boolean" },
+          "logged_at": { "type": "string", "format": "date-time" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time" },
+          "user_at": { "type": "string", "format": "uuid" }
+        }
+      },
+
+      "CreateUsersRequest": {
+        "type": "object",
+        "required": ["usuario", "login", "pass", "pass2", "email", "termos_uso", "notification"],
+        "properties": {
+          "usuario": { "type": "string", "example": "João Silva" },
+          "login": { "type": "string", "example": "joaosilva" },
+          "pass": { "type": "string", "example": "SenhaSegura123!" },
+          "pass2": { "type": "string", "example": "SenhaSegura123!" },
+          "avatar": { "type": "string", "example": "https://example.com/avatar.jpg" },
+          "email": { "type": "string", "example": "joao.silva@gmail.com" },
+          "cpf": { "type": "string", "example": "123.456.789-00" },
+          "perfil": { "type": "string", "example": "Administrador" }, 
+          "contato": { "type": "string", "example": "+55 11 91234-5678" },
+          "status_at": { "type": "boolean", "example": true },
+          "termos_uso": { "type": "boolean", "example": true },
+          "notification": { "type": "boolean", "example": true }
+        }
+      },
+
+      "UpdateUsersRequest": {
+        "type": "object",
+        "required": ["uuidusuario", "usuario", "login", "email", "status_at"],
+        "properties": {
+          "uuidusuario": { "type": "string", "format": "uuid" },
+          "usuario": { "type": "string", "example": "João Silva" },
+          "login": { "type": "string", "example": "joaosilva" },
+          "pass": { "type": "string", "example": "SenhaSegura123!" },
+          "pass2": { "type": "string", "example": "SenhaSegura123!" },
+          "avatar": { "type": "string", "example": "https://example.com/avatar.jpg" },
+          "email": { "type": "string", "example": "joao.silva@gmail.com"},
+          "cpf": { "type": "string", "example": "123.456.789-00" },
+          "perfil": { "type": "string", "example": "Administrador" }, 
+          "status_at": { "type": "boolean", "example": true },
+          "contato": { "type": "string", "example": "+55 11 91234-5678" },
+          "termos_uso": { "type": "boolean", "example": true },
+          "notification": { "type": "boolean", "example": true }
+        }
+      },
+
+      "ReadUsersRequest": {
+        "type": "object",
+        "required": ["usuario", "email", "termos_uso"],
+        "properties": {
+          "usuario": { "type": "string", "example": "João Silva" },
+          "login": { "type": "string", "nullable": true },
+          "email": { "type": "string", "example": "joao@email.com" },
+          "contato": { "type": "string", "nullable": true },
+          "cpf": { "type": "string", "nullable": true },
+          "termos_uso": { "type": "boolean", "example": true }
+        }
+      },
+
+      "UpdateProfileRequest": {
+        "type": "object",
+        "required": ["uuidusuario", "usuario", "login", "email", "status_at"],
+        "properties": {
+          "uuidusuario": { "type": "string", "format": "uuid" },
+          "usuario": { "type": "string", "example": "João Silva" },
+          "login": { "type": "string", "example": "joaosilva" },
+          "pass": { "type": "string", "example": "SenhaSegura123!" },
+          "pass2": { "type": "string", "example": "SenhaSegura123!" },
+          "avatar": { "type": "string", "example": "https://example.com/avatar.jpg" },
+          "email": { "type": "string", "example": "joao.silva@gmail.com"},
+          "cpf": { "type": "string", "example": "123.456.789-00" },
+          "perfil": { "type": "string", "example": "Administrador" }, 
+          "status_at": { "type": "boolean", "example": true },
+          "contato": { "type": "string", "example": "+55 11 91234-5678" },
+          "termos_uso": { "type": "boolean", "example": true },
+          "notification": { "type": "boolean", "example": true }
+        }
+      },
+
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "Descrição do erro ocorrido"
+          },
+          "code": {
+            "type": "integer",
+            "example": 400
+          }
+        }
+      }
+
+    },
+
+    "responses": {
+      "BadRequest": {
+        "description": "Parâmetros inválidos",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "Token inválido ou ausente",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "Recurso não encontrado",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+          }
+        }
+      },
+      "InternalServerError": {
+        "description": "Erro interno",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+          }
+        }
+      }
+    }
+
+  }
+
+}
