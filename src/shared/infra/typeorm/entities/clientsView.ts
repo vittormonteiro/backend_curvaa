@@ -14,9 +14,6 @@ export default class clientsView {
     uuidcliente!: string;
 
     @Column()
-    categoria!: string;
-
-    @Column()
     cliente!: string;
 
     @Column()

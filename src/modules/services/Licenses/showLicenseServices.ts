@@ -36,9 +36,9 @@ export default class ShowLicenseServices {
 
     return {
       uuidlicenca: license.uuidlicenca,
-      uuidcliente: license.uuidcliente,
+      uuidcliente: null,
       chave: license.chave,
-      status: license.status,
+      status: license.status ? 'Ativo' : 'Inativo',
       limite_usuarios: license.limite_usuarios,
       usuarios_cadastrados: usersCount,
     };

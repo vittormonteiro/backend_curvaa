@@ -1,6 +1,6 @@
 import { notFound } from "../../../shared/errors/errorFactories";
 import { repository, entity } from '../../../shared/infra/typeorm/repositories/activitiesRepository';
-import { IActivityPayload, syncActivityDependencies, validateActivitySchedule } from './activityScheduleRules';
+import { IActivityPayload, assertWorkBelongsToLicense, syncActivityDependencies, validateActivitySchedule } from './activityScheduleRules';
 
 export default class updateActivitiesServices {
 
@@ -13,6 +13,8 @@ export default class updateActivitiesServices {
     if (!result) {
       throw notFound();
     }
+
+    await assertWorkBelongsToLicense(result.uuidobra, object.uuidlicenca);
 
     const payload = repository.merge(result, object);
     const dependencies = await validateActivitySchedule({

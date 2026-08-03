@@ -8,14 +8,35 @@ import {
 
 import { v4 as uuid } from 'uuid';
 
-@Entity('tb_licenca')
+@Entity('tb_licencas')
 export default class license {
 
-  @PrimaryColumn('uuid')
+  @PrimaryColumn('uuid', { name: '_uuid' })
   uuidlicenca!: string;
 
-  @Column('uuid')
-  uuidcliente!: string;
+  @Column()
+  empresa!: string;
+
+  @Column()
+  razao_social!: string;
+
+  @Column()
+  cnpj!: string;
+
+  @Column()
+  ctt_empresa!: string;
+
+  @Column()
+  email_empresa!: string;
+
+  @Column()
+  nm_assin!: string;
+
+  @Column()
+  ctt_assin!: string;
+
+  @Column()
+  email_assin!: string;
 
   @Column()
   chave!: string;
@@ -23,8 +44,8 @@ export default class license {
   @Column('integer')
   limite_usuarios!: number;
 
-  @Column()
-  status!: string;
+  @Column('boolean')
+  status!: boolean;
 
   @CreateDateColumn()
   created_at: Date;
@@ -32,7 +53,7 @@ export default class license {
   @UpdateDateColumn()
   updated_at: Date;
 
-  @Column('uuid', { nullable: true })
+  @Column('uuid')
   user_at: string;
 
   constructor() {

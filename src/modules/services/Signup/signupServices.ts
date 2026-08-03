@@ -169,10 +169,17 @@ export default class SignupServices {
 
     const savedClient = await clientsRepository.save(client as any);
     const license = licenseRepository.create({
-      uuidcliente: savedClient.uuidcliente,
+      empresa: object.cliente,
+      razao_social: object.razao_social,
+      cnpj: cpf_cnpj,
+      ctt_empresa: object.contato || '',
+      email_empresa: object.email,
+      nm_assin: object.admin_nome,
+      ctt_assin: object.contato || '',
+      email_assin: object.admin_email,
       chave: buildLicenseKey(),
       limite_usuarios,
-      status: 'Ativo',
+      status: true,
       user_at: uuidusuario,
     });
     const savedLicense = await licenseRepository.save(license);

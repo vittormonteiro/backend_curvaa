@@ -5,6 +5,7 @@ import { repository, entity } from '../../../shared/infra/typeorm/repositories/w
 interface IRequestDTO {
     _uuid: string;
     uuidusuario: string;
+    uuidlicenca: string;
 }
 
 export default class indexWorksServices {
@@ -15,6 +16,10 @@ export default class indexWorksServices {
 
         if (!result) {
             throw notFound()
+        }
+
+        if (result.uuidlicenca !== object.uuidlicenca) {
+            throw notFound('Obra nao encontrada para esta licenca.');
         }
 
         /*

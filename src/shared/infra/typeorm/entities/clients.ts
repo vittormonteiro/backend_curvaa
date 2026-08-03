@@ -13,10 +13,7 @@ export default class clients {
 
     @PrimaryGeneratedColumn()
     uuidcliente!: string;
-    
-    @Column()
-    categoria!: string;
-
+  
     @Column()
     cliente!: string;
 

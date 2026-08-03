@@ -1,11 +1,14 @@
 import { Router } from 'express';
 import { celebrate,Joi,Segments } from 'celebrate';
+import multer from 'multer';
+import uploadConfig from '../../shared/config/upload';
 import isAutentication from '../services/middlewares/isAutentication';
 import Controller from '../controllers/worksControllers';
 
 const router = Router();
 router.use(isAutentication);
 const controller = new Controller();
+const upload = multer(uploadConfig.multer);
 
 router.post('/create', celebrate({
     [Segments.BODY]:{
@@ -14,6 +17,7 @@ router.post('/create', celebrate({
         codigo: Joi.string().required(),
         titulo: Joi.string().required(),
         escopo: Joi.string().required(),
+        foto: Joi.string().optional().allow(null).empty(''),
         data: Joi.string().required(),
         previsao: Joi.string().required(),
         dt_fim: Joi.string().optional().allow(null),
@@ -34,6 +38,12 @@ router.get('/last', controller.last);
 
 router.get('/dashboard', controller.dashboard);
 
+router.patch('/photo', upload.single('file'), celebrate({
+    [Segments.BODY]:{
+        _uuid: Joi.string().uuid().required(),
+    }
+}), controller.uploadPhoto);
+
 router.put('/', celebrate({
     [Segments.BODY]:{
         _uuid: Joi.string().uuid().required(),
@@ -41,6 +51,7 @@ router.put('/', celebrate({
         codigo: Joi.string().required(),
         titulo: Joi.string().required(),
         escopo: Joi.string().required(),
+        foto: Joi.string().optional().allow(null).empty(''),
         data: Joi.string().required(),
         previsao: Joi.string().required(),
         dt_fim: Joi.string().optional().allow(null),

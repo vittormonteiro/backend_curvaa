@@ -1,8 +1,10 @@
 import { conflict, notFound } from "../../../shared/errors/errorFactories";
 import { repository, repositoryDependencies } from '../../../shared/infra/typeorm/repositories/activitiesRepository';
+import { assertWorkBelongsToLicense } from './activityScheduleRules';
 
 interface IRequestDTO{
   _uuid: string;
+  uuidlicenca: string;
 }
 
 export default class deleteActivitiesServices {
@@ -14,6 +16,8 @@ export default class deleteActivitiesServices {
     if (!result) {
       throw notFound();
     }
+
+    await assertWorkBelongsToLicense(result.uuidobra, _uuid.uuidlicenca);
 
     const children = await repository.find({
       where: { uuidatividade_pai: _uuid._uuid },

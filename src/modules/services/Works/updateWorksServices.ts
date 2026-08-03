@@ -11,11 +11,19 @@ export default class updateProjectsServices {
       throw notFound();
     }
 
+    if (result.uuidlicenca !== object.uuidlicenca) {
+      throw notFound('Obra nao encontrada para esta licenca.');
+    }
+
     if (object.codigo !== result.codigo) {
       throw conflict('Código da obra não pode ser alterado.');
     }
 
-    return await repository.save(object);
+    return await repository.save({
+      ...result,
+      ...object,
+      uuidlicenca: result.uuidlicenca,
+    });
 
   }
 

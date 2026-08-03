@@ -1,4 +1,4 @@
-import { repositoryView, view } from '../../../shared/infra/typeorm/repositories/worksRepository';
+import { repository, repositoryView, view } from '../../../shared/infra/typeorm/repositories/worksRepository';
 
 type StatusKey = 'ATIVO' | 'SUSPENSO' | 'FINALIZADO';
 
@@ -13,6 +13,7 @@ export interface IDashboardWork {
   status: string;
   status_label: string;
   obra: string;
+  foto: string | null;
   responsavel: string;
   orcado: number;
   orcado_str: string;
@@ -107,6 +108,8 @@ const getScheduleProgress = (work: view): IProgress => {
 export default class DashboardWorksServices {
   public async execute(uuidlicenca: string): Promise<IDashboardWorksResponse> {
     const works = await repositoryView.findByLicense(uuidlicenca);
+    const workEntities = await repository.findByLincense(uuidlicenca);
+    const photos = new Map(workEntities.map((work) => [work._uuid, work.foto || null]));
 
     const rows = works.map((work) => {
       const scheduleProgress = getScheduleProgress(work);
@@ -118,6 +121,7 @@ export default class DashboardWorksServices {
         status: work.status,
         status_label: statusLabels[status] || work.status,
         obra: `${work.codigo} - ${work.titulo}`,
+        foto: photos.get(work._uuid) || null,
         responsavel: work.cliente,
         orcado: budget,
         orcado_str: work.valor_str,

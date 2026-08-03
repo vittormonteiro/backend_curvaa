@@ -7,6 +7,7 @@ import IndexWorksServices  from '../services/Works/indexWorksServices';
 import ShowWorksServices  from '../services/Works/showWorksServices';
 import LastWorksServices  from '../services/Works/lastWorksServices';
 import DashboardWorksServices from '../services/Works/dashboardWorksServices';
+import UploadWorkPhotoServices from '../services/Works/uploadWorkPhotoServices';
 //import UpdateTeamsWorksServices from '../services/Works/updateTeamsWorksServices';
 
 export default class worksControllers {
@@ -57,7 +58,7 @@ export default class worksControllers {
 
     const services = new DeleteWorksServices();
 
-    await services.execute({_uuid, uuidusuario});
+    await services.execute({_uuid, uuidusuario, uuidlicenca: request.user.uuidlicenca});
 
     return response.status(204).send();
 
@@ -70,7 +71,7 @@ export default class worksControllers {
 
     const services = new IndexWorksServices();
 
-    const result = await services.execute({_uuid, uuidusuario});
+    const result = await services.execute({_uuid, uuidusuario, uuidlicenca: request.user.uuidlicenca});
 
     return response.json(result);
 
@@ -107,6 +108,25 @@ export default class worksControllers {
     return response.json(result);
 
   };
+
+  public async uploadPhoto(request: Request, response: Response): Promise<Response> {
+
+    if (!request.file) {
+      return response.status(409).json("Arquivo não enviado!");
+    }
+
+    const services = new UploadWorkPhotoServices();
+
+    const result = await services.execute({
+      _uuid: request.body._uuid,
+      uuidlicenca: request.user.uuidlicenca,
+      user_at: request.user.uuidusuario,
+      filename: request.file.filename,
+    });
+
+    return response.status(201).json(result);
+
+  };
   
   /*
   public async updateTeams(request: Request , response: Response): Promise<Response>{
@@ -123,6 +143,3 @@ export default class worksControllers {
   */
 
 };
-
-
-

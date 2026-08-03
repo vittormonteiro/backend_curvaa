@@ -5,6 +5,7 @@ import { repository } from '../../../shared/infra/typeorm/repositories/worksRepo
 interface IRequestDTO {
     _uuid: string;
     uuidusuario: string;
+    uuidlicenca: string;
 }
 
 export default class deleteWorksServices {
@@ -15,6 +16,10 @@ export default class deleteWorksServices {
 
         if (!result) {
             throw notFound()
+        }
+
+        if (result.uuidlicenca !== object.uuidlicenca) {
+            throw notFound('Obra nao encontrada para esta licenca.');
         }
 
         result.status = "SUSPENSO";

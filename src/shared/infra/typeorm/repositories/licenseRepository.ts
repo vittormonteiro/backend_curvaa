@@ -9,15 +9,15 @@ export const repository = AppDataSource.getRepository(Entity).extend({
     return this.findOne({
       where: {
         chave,
-        status: 'Ativo'
+        status: true
       }
     });
   },
 
-  async findByClient(uuidcliente: string): Promise<entity | null> {
+  async findByCnpj(cnpj: string): Promise<entity | null> {
     return this.findOne({
       where: {
-        uuidcliente
+        cnpj
       }
     });
   },

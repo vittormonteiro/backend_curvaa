@@ -36,6 +36,7 @@ app.use(errors());
 app.use('/files/colaboradores', express.static(path.resolve(uploadConfig.uploadsFolder,'colaboradores')));
 app.use('/files/comunicados', express.static(path.resolve(uploadConfig.uploadsFolder,'comunicados')));
 app.use('/files/tutorial', express.static(path.resolve(uploadConfig.uploadsFolder,'tutoriais')));
+app.use('/files/obras', express.static(path.resolve(uploadConfig.uploadsFolder,'obras')));
 
 app.use((error:Error, request:Request, response:Response, next:NextFunction) =>{
 

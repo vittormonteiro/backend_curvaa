@@ -53,7 +53,7 @@ export default class activitiesController {
 
     const services = new DeleteActivitiesServices();
 
-    await services.execute({ _uuid });
+    await services.execute({ _uuid, uuidlicenca: request.user.uuidlicenca });
 
     return response.status(204).send();
 
@@ -78,7 +78,7 @@ export default class activitiesController {
 
     const services = new IndexActivitiesServices();
 
-    const result = await services.execute({ _uuid });
+    const result = await services.execute({ _uuid, uuidlicenca: request.user.uuidlicenca });
 
     return response.json(result);
 
@@ -95,4 +95,3 @@ export default class activitiesController {
   };
 
 };
-

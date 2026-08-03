@@ -26,6 +26,9 @@ export default class works {
   @Column()
   escopo!: string;
 
+  @Column({ nullable: true })
+  foto!: string;
+
   @Column('date')
   data!: Date;
 

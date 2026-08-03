@@ -11,7 +11,6 @@ const controller = new Controller();
 router.post('/create', celebrate({
     [Segments.BODY]:{
         uuidcliente:Joi.string().uuid().allow(null),
-        categoria:Joi.string().required(),
         cliente:Joi.string().required().uppercase(),
         email:Joi.string().optional().allow(null),
         contato:Joi.string().optional().allow(null),
@@ -34,7 +33,6 @@ router.post('/read', celebrate({
 router.put('/',celebrate({
     [Segments.BODY]:{
         uuidcliente:Joi.string().uuid().required(),
-        categoria:Joi.string().required(),
         cliente:Joi.string().required().uppercase(),
         email:Joi.string().optional().allow(null),
         contato:Joi.string().optional().allow(null),

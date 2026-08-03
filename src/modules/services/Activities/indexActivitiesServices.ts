@@ -1,8 +1,10 @@
 import { notFound } from "../../../shared/errors/errorFactories";
 import { repository, repositoryDependencies, entity } from '../../../shared/infra/typeorm/repositories/activitiesRepository';
+import { assertWorkBelongsToLicense } from './activityScheduleRules';
 
 interface IResponseDTO {
     _uuid: string;
+    uuidlicenca: string;
 }
 
 export default class indexActivitiesServices {
@@ -14,6 +16,8 @@ export default class indexActivitiesServices {
         if(!result){
             throw notFound();
         }
+
+        await assertWorkBelongsToLicense(result.uuidobra, _uuid.uuidlicenca);
 
         const dependencies = await repositoryDependencies.findByActivity(result._uuid);
 

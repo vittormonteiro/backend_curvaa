@@ -1,6 +1,6 @@
 import { conflict } from "../../../shared/errors/errorFactories";
 import { repository, repositoryDependencies, entity } from '../../../shared/infra/typeorm/repositories/activitiesRepository';
-import { IActivityPayload, syncActivityDependencies, validateActivitySchedule } from './activityScheduleRules';
+import { IActivityPayload, assertWorkBelongsToLicense, syncActivityDependencies, validateActivitySchedule } from './activityScheduleRules';
 
 interface IImportActivityPayload extends IActivityPayload {
   atividade_pai_ref?: string | null;
@@ -40,6 +40,8 @@ const addActivityReferences = (referenceMap: Map<string, string>, activity: Part
 export default class importActivitiesServices {
 
   public async execute({ uuidobra, uuidlicenca, user_at, activities }: IRequestDTO): Promise<IImportResponse> {
+
+    await assertWorkBelongsToLicense(uuidobra, uuidlicenca);
 
     const existingActivities = await repository.find({
       where: { uuidobra },

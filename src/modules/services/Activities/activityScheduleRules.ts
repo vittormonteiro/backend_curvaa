@@ -145,6 +145,14 @@ const validateDependencies = async (object: IActivityPayload, dependencies: stri
   }
 };
 
+export const assertWorkBelongsToLicense = async (uuidobra: string, uuidlicenca?: string): Promise<void> => {
+  const work = await worksRepositoryView.findByUUID(uuidobra);
+
+  if (!work || (uuidlicenca && work.uuidlicenca !== uuidlicenca)) {
+    throw notFound('Obra nao encontrada para esta licenca.');
+  }
+};
+
 export const validateActivitySchedule = async (object: IActivityPayload): Promise<string[]> => {
   if (!object.uuidobra) {
     throw badRequest('Obra obrigatoria.');
@@ -158,11 +166,7 @@ export const validateActivitySchedule = async (object: IActivityPayload): Promis
     throw badRequest('Tempo deve ser maior que zero.');
   }
 
-  const work = await worksRepositoryView.findByUUID(object.uuidobra);
-
-  if (!work || (object.uuidlicenca && work.uuidlicenca !== object.uuidlicenca)) {
-    throw notFound('Obra nao encontrada para esta licenca.');
-  }
+  await assertWorkBelongsToLicense(object.uuidobra, object.uuidlicenca);
 
   const start = toDate(object.dt_inicio);
   const end = getActivityEnd(object);
