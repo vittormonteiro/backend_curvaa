@@ -157,7 +157,6 @@ export default class SignupServices {
 
     const uuidusuario = uuid();
     const client = clientsRepository.create({
-      categoria: 'CLIENTE',
       cliente: object.cliente,
       email: object.email,
       contato: object.contato || undefined,
