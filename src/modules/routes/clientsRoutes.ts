@@ -16,7 +16,7 @@ router.post('/create', celebrate({
         contato:Joi.string().optional().allow(null),
         razao_social:Joi.string().optional().uppercase().allow(null),
         cpf_cnpj: Joi.string().required().replace(/\.|\-|\//g, ''),
-        status:Joi.boolean().required(), 
+        status:Joi.boolean().optional().default(true), 
     }
 }), controller.create);
 

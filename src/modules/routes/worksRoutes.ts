@@ -13,7 +13,7 @@ const upload = multer(uploadConfig.multer);
 router.post('/create', celebrate({
     [Segments.BODY]:{
         _uuid: Joi.string().uuid().allow(null),
-        status: Joi.string().disallow().default("ATIVO"),
+        status: Joi.string().optional().uppercase().default("ATIVO"),
         codigo: Joi.string().required(),
         titulo: Joi.string().required(),
         escopo: Joi.string().required(),
