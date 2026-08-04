@@ -9,26 +9,26 @@ interface IRequestDTO{
 
 export default class deleteActivitiesServices {
 
-  public async execute(_uuid: IRequestDTO): Promise<void> {
+  public async execute(object: IRequestDTO): Promise<void> {
 
-    const result = await repository.findOneBy(_uuid);
+    const result = await repository.findOneBy({ _uuid: object._uuid });
 
     if (!result) {
       throw notFound();
     }
 
-    await assertWorkBelongsToLicense(result.uuidobra, _uuid.uuidlicenca);
+    await assertWorkBelongsToLicense(result.uuidobra, object.uuidlicenca);
 
     const children = await repository.find({
-      where: { uuidatividade_pai: _uuid._uuid },
+      where: { uuidatividade_pai: object._uuid },
     });
 
     if (children.length) {
       throw conflict('Nao e possivel excluir atividade com sub-atividades.');
     }
 
-    await repositoryDependencies.deleteByActivity(_uuid._uuid);
-    await repositoryDependencies.deleteByDependent(_uuid._uuid);
+    await repositoryDependencies.deleteByActivity(object._uuid);
+    await repositoryDependencies.deleteByDependent(object._uuid);
 
     await repository.remove(result);
     

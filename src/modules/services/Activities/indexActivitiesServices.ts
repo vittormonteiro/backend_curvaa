@@ -9,15 +9,15 @@ interface IResponseDTO {
 
 export default class indexActivitiesServices {
 
-    public async execute(_uuid:IResponseDTO): Promise<entity & { dependencias: string[] }> {
+    public async execute(object:IResponseDTO): Promise<entity & { dependencias: string[] }> {
 
-        const result = await repository.findOneBy(_uuid);
+        const result = await repository.findOneBy({ _uuid: object._uuid });
 
         if(!result){
             throw notFound();
         }
 
-        await assertWorkBelongsToLicense(result.uuidobra, _uuid.uuidlicenca);
+        await assertWorkBelongsToLicense(result.uuidobra, object.uuidlicenca);
 
         const dependencies = await repositoryDependencies.findByActivity(result._uuid);
 
